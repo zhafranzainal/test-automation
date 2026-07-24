@@ -27,9 +27,12 @@ jobs:
           repository: testsmith-io/practice-software-testing
           path: pst-app
 
+      - name: Set up QEMU for multi-arch containers
+        uses: docker/setup-qemu-action@v3
+
       - name: Start application stack
         working-directory: ./pst-app
-        run: docker compose up -d
+        run: docker compose -f docker-compose.prod.yml up --pull missing -d
 
       - name: Show env and container status
         if: always()
@@ -44,7 +47,7 @@ jobs:
 
       - name: Wait for app to be ready
         run: |
-          npx --yes wait-on -t 120000 http://localhost:4200 http://localhost:8091
+          npx --yes wait-on -t 300000 -i 3000 http://localhost:4200 http://localhost:8091
 
       - uses: actions/setup-node@v4
         with:
