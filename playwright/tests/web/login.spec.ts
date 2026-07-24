@@ -19,12 +19,12 @@ test.describe('Customer Login', () => {
     });
 
     await test.step('And user enters valid credentials and submits', async () => {
-      await loginPage.waitForUrlContains('/auth/login');
+      await loginPage.waitForLoad();
       await loginPage.login('customer@practicesoftwaretesting.com', 'welcome01');
     });
 
     await test.step('Then user is able to view "My account" page with user name "Jane Doe"', async () => {
-      await myAccountPage.waitForUrlContains('/account');
+      await myAccountPage.waitForLoad();
       await expect(myAccountPage.pageTitle).toBeVisible();
       await expect(myAccountPage.navUserMenu).toContainText('Jane Doe');
     });
