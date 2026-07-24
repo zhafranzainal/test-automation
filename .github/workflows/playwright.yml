@@ -31,6 +31,17 @@ jobs:
         working-directory: ./pst-app
         run: docker compose -f docker-compose.prod.yml up --pull missing -d
 
+      - name: Show env and container status
+        if: always()
+        working-directory: ./pst-app
+        run: |
+          echo "--- .env contents ---"
+          cat .env || echo ".env not found"
+          echo "--- container status ---"
+          docker compose -f docker-compose.prod.yml ps -a
+          echo "--- images pulled ---"
+          docker images | grep testsmith
+
       - name: Wait for app to be ready
         run: |
           npx --yes wait-on -t 120000 http://localhost:4200 http://localhost:8091
