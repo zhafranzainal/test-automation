@@ -29,6 +29,8 @@ jobs:
 
       - name: Start application stack
         working-directory: ./pst-app
+        env:
+          DOCKER_DEFAULT_PLATFORM: linux/amd64
         run: docker compose -f docker-compose.prod.yml up --pull missing -d
 
       - name: Show env and container status
