@@ -44,8 +44,8 @@ jobs:
         with:
           name: playwright-results-${{ github.run_id }}
           path: |
-            playwright-report/
-            test-results.json
+            playwright/playwright-report/
+            playwright/test-results.json
           retention-days: 30
 
       - name: Setup Pages
