@@ -1,6 +1,7 @@
 import { Page, Locator } from '@playwright/test';
 import { BasePage } from './base.page';
 import { routes } from '../utils/routes';
+import { PAGE_HEADER } from '../utils/ui-elements';
 
 export class MyAccountPage extends BasePage {
 
@@ -9,7 +10,7 @@ export class MyAccountPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.pageTitle = page.getByRole('heading', { name: 'My account' });
+    this.pageTitle = page.getByRole('heading', { name: PAGE_HEADER.MY_ACCOUNT_PAGE });
     this.navUserMenu = page.locator('[data-test="nav-menu"]');
   }
 
