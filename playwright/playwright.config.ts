@@ -15,7 +15,7 @@ export default defineConfig({
       name: 'web',
       testDir: './tests/web',
       use: {
-        baseURL: 'https://practicesoftwaretesting.com',
+        baseURL: process.env.WEB_URL,
         ...devices['Desktop Chrome'],
         screenshot: 'only-on-failure',
         video: 'retain-on-failure',
@@ -25,7 +25,7 @@ export default defineConfig({
       name: 'api',
       testDir: './tests/api',
       use: {
-        baseURL: 'https://automationexercise.com',
+        baseURL: process.env.API_URL,
       },
     },
   ],
