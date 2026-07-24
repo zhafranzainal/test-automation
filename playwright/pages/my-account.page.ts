@@ -15,7 +15,7 @@ export class MyAccountPage extends BasePage {
   }
 
   async waitForLoad() {
-    await this.waitForUrlContains(routes.myAccountPageUrl);
+    await this.waitForUrlContains(routes.MY_ACCOUNT_PAGE_URL);
   }
 
 }

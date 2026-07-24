@@ -22,7 +22,7 @@ export class LoginPage extends BasePage {
   }
 
   async waitForLoad() {
-    await this.waitForUrlContains(routes.loginPageUrl);
+    await this.waitForUrlContains(routes.LOGIN_PAGE_URL);
   }
 
   async clickSignIn() {

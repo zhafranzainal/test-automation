@@ -1,4 +1,4 @@
 export const routes = {
-    loginPageUrl: '/auth/login',
-    myAccountPageUrl: '/account',
+    LOGIN_PAGE_URL: '/auth/login',
+    MY_ACCOUNT_PAGE_URL: '/account',
 } as const;
