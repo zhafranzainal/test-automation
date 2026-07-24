@@ -56,7 +56,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-pages-artifact@v3
         with:
-          path: playwright-report
+          path: playwright/playwright-report
 
       - name: Deploy report
         if: ${{ !cancelled() }}
