@@ -11,7 +11,7 @@ export class MyAccountPage extends BasePage {
   constructor(page: Page) {
     super(page);
     this.pageTitle = page.getByRole('heading', { name: PAGE_HEADER.MY_ACCOUNT_PAGE });
-    this.navUserMenu = page.locator('[data-test="nav-menu"]');
+    this.navUserMenu = page.getByTestId('nav-menu');
   }
 
   async waitForLoad() {

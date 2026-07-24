@@ -11,10 +11,10 @@ export class LoginPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.signInLink = page.locator('[data-test="nav-sign-in"]');
-    this.emailInput = page.locator('[data-test="email"]');
-    this.passwordInput = page.locator('[data-test="password"]');
-    this.loginButton = page.locator('[data-test="login-submit"]');
+    this.signInLink = page.getByTestId('nav-sign-in');
+    this.emailInput = page.getByTestId('email');
+    this.passwordInput = page.getByTestId('password');
+    this.loginButton = page.getByTestId('login-submit');
   }
 
   async open() {

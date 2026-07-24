@@ -11,6 +11,7 @@ export default defineConfig({
 
   use: {
     trace: 'retain-on-failure',
+    testIdAttribute: 'data-test',
   },
 
   projects: [
