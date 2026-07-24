@@ -1,7 +1,7 @@
 import { test, expect } from '../../fixtures/base.fixture';
 
-import { LoginPage } from '../../pages/LoginPage';
-import { MyAccountPage } from '../../pages/MyAccountPage';
+import { LoginPage } from '../../pages/login.page';
+import { MyAccountPage } from '../../pages/my-account.page';
 
 test.describe('Customer Login', () => {
 
