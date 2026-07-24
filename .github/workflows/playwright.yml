@@ -13,30 +13,52 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./playwright
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout test-automation repo
+        uses: actions/checkout@v4
+
+      - name: Checkout practice-software-testing app
+        uses: actions/checkout@v4
+        with:
+          repository: testsmith-io/practice-software-testing
+          path: pst-app
+
+      - name: Start application stack
+        working-directory: ./pst-app
+        run: docker compose -f docker-compose.prod.yml up --pull missing -d
+
+      - name: Wait for app to be ready
+        run: |
+          npx --yes wait-on -t 120000 http://localhost:4200 http://localhost:8091
 
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
       - name: Install dependencies
+        working-directory: ./playwright
         run: npm ci
 
       - name: Install Playwright Browsers
+        working-directory: ./playwright
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests
+        working-directory: ./playwright
         env:
           CI: true
-          WEB_URL: ${{ vars.WEB_URL }}
-          API_URL: ${{ vars.API_URL }}
+          WEB_URL: http://localhost:4200
+          API_URL: http://localhost:8091
         run: npx playwright test
+
+      - name: Show app logs on failure
+        if: failure()
+        working-directory: ./pst-app
+        run: docker compose -f docker-compose.prod.yml logs --tail=200
 
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
@@ -59,5 +81,6 @@ jobs:
           path: playwright/playwright-report
 
       - name: Deploy report
+        id: deployment
         if: ${{ !cancelled() }}
         uses: actions/deploy-pages@v4
