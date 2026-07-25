@@ -1,0 +1,53 @@
+$kind: http-request
+name: "API 13: PUT METHOD To Update User Account"
+url: "{{baseUrl}}/updateAccount"
+method: PUT
+body:
+  type: urlencoded
+  content:
+    name: "{{testUserName}} Updated"
+    email: "{{testUserEmail}}"
+    password: "{{testUserPassword}}"
+    title: Mr
+    birth_date: "15"
+    birth_month: "6"
+    birth_year: "1995"
+    firstname: QA
+    lastname: Tester
+    company: Fintech Sdn Bhd
+    address1: 123 Automation Street
+    address2: Unit 4B
+    country: Turkey
+    zipcode: "35210"
+    state: Izmir
+    city: Izmir
+    mobile_number: "5456789012"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const body = pm.response.json();\r
+
+      \r
+
+      pm.test(\"responseCode is 200\", () => {\r
+
+      \    pm.expect(body.responseCode).to.eql(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"message confirms user updated\", () => {\r
+
+      \    pm.expect(body.message).to.eql(\"User updated!\");\r
+
+      });"
+    language: text/javascript
+order: 4000

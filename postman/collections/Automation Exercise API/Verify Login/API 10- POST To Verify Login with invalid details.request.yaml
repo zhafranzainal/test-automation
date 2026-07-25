@@ -1,0 +1,38 @@
+$kind: http-request
+name: "API 10: POST To Verify Login with invalid details"
+url: "{{baseUrl}}/verifyLogin"
+method: POST
+body:
+  type: urlencoded
+  content:
+    email: not.a.real.user@example.com
+    password: wrong-password
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const body = pm.response.json();\r
+
+      \r
+
+      pm.test(\"responseCode is 404\", () => {\r
+
+      \    pm.expect(body.responseCode).to.eql(404);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"message indicates user not found\", () => {\r
+
+      \    pm.expect(body.message).to.eql(\"User not found!\");\r
+
+      });"
+    language: text/javascript
+order: 3000

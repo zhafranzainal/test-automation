@@ -1,0 +1,3 @@
+$kind: collection
+description: "Run in order (matches playwright test.describe.serial in account.spec.ts): create -> login -> fetch -> update -> delete. Each request stores/reuses testUserName, testUserEmail, testUserPassword environment variables generated in API 11."
+order: 5000

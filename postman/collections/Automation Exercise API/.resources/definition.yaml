@@ -1,0 +1,2 @@
+$kind: collection
+description: Covers all 14 public endpoints of automationexercise.com/api, mirroring playwright/tests/api/*.spec.ts (Products List, Brands List, Search Product, Verify Login, User Account Lifecycle).

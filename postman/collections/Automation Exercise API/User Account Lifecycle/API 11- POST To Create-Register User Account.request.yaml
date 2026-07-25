@@ -1,0 +1,64 @@
+$kind: http-request
+name: "API 11: POST To Create/Register User Account"
+url: "{{baseUrl}}/createAccount"
+method: POST
+body:
+  type: urlencoded
+  content:
+    name: "{{testUserName}}"
+    email: "{{testUserEmail}}"
+    password: "{{testUserPassword}}"
+    title: Mr
+    birth_date: "15"
+    birth_month: "6"
+    birth_year: "1995"
+    firstname: QA
+    lastname: Tester
+    company: Fintech Sdn Bhd
+    address1: 123 Automation Street
+    address2: Unit 4B
+    country: Turkey
+    zipcode: "35210"
+    state: Izmir
+    city: Izmir
+    mobile_number: "5456789012"
+scripts:
+  - type: beforeRequest
+    code: "const timestamp = Date.now();\r
+
+      \r
+
+      pm.environment.set('testUserName', `QA Tester ${timestamp}`);\r
+
+      pm.environment.set('testUserEmail', `qa.tester.${timestamp}@example.com`);\r
+
+      pm.environment.set('testUserPassword', 'Test@1234');"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Status 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const body = pm.response.json();\r
+
+      \r
+
+      pm.test(\"responseCode is 201\", () => {\r
+
+      \    pm.expect(body.responseCode).to.eql(201);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"message confirms user created\", () => {\r
+
+      \    pm.expect(body.message).to.eql(\"User created!\");\r
+
+      });"
+    language: text/javascript
+order: 1000

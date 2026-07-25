@@ -1,0 +1,38 @@
+$kind: http-request
+name: "API 7: POST To Verify Login with valid details"
+url: "{{baseUrl}}/verifyLogin"
+method: POST
+body:
+  type: urlencoded
+  content:
+    email: "{{testUserEmail}}"
+    password: "{{testUserPassword}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const body = pm.response.json();\r
+
+      \r
+
+      pm.test(\"responseCode is 200\", () => {\r
+
+      \    pm.expect(body.responseCode).to.eql(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"message confirms user exists\", () => {\r
+
+      \    pm.expect(body.message).to.eql(\"User exists!\");\r
+
+      });"
+    language: text/javascript
+order: 2000

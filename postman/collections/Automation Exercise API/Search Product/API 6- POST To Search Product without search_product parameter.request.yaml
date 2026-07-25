@@ -1,0 +1,35 @@
+$kind: http-request
+name: "API 6: POST To Search Product without search_product parameter"
+url: "{{baseUrl}}/searchProduct"
+method: POST
+body:
+  type: urlencoded
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const body = pm.response.json();\r
+
+      \r
+
+      pm.test(\"responseCode is 400\", () => {\r
+
+      \    pm.expect(body.responseCode).to.eql(400);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"message indicates missing parameter\", () => {\r
+
+      \    pm.expect(body.message).to.eql(\"Bad request, search_product parameter is missing in POST request.\");\r
+
+      });"
+    language: text/javascript
+order: 2000

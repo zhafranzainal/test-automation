@@ -1,0 +1,33 @@
+$kind: http-request
+name: "API 4: PUT To All Brands List should not be allowed"
+url: "{{baseUrl}}/brandsList"
+method: PUT
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const body = pm.response.json();\r
+
+      \r
+
+      pm.test(\"responseCode is 405\", () => {\r
+
+      \    pm.expect(body.responseCode).to.eql(405);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"message indicates method not supported\", () => {\r
+
+      \    pm.expect(body.message).to.eql(\"This request method is not supported.\");\r
+
+      });"
+    language: text/javascript
+order: 2000

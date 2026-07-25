@@ -1,0 +1,39 @@
+$kind: http-request
+name: "API 14: GET user account detail by email"
+url: "{{baseUrl}}/getUserDetailByEmail?email={{testUserEmail}}"
+method: GET
+queryParams:
+  email: "{{testUserEmail}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const body = pm.response.json();\r
+
+      \r
+
+      pm.test(\"responseCode is 200\", () => {\r
+
+      \    pm.expect(body.responseCode).to.eql(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"returns correct user details\", () => {\r
+
+      \    pm.expect(body.user.email).to.eql(pm.environment.get('testUserEmail'));\r
+
+      \    pm.expect(body.user.first_name).to.eql('QA');\r
+
+      \    pm.expect(body.user.last_name).to.eql('Tester');\r
+
+      });"
+    language: text/javascript
+order: 3000

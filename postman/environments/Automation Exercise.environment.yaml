@@ -1,0 +1,10 @@
+name: Automation Exercise
+values:
+  - key: baseUrl
+    value: 'https://automationexercise.com/api'
+  - key: testUserName
+    value: ''
+  - key: testUserEmail
+    value: ''
+  - key: testUserPassword
+    value: ''
