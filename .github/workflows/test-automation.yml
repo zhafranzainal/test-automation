@@ -160,9 +160,38 @@ jobs:
             postman/newman-report/
           retention-days: 30
 
+  karate:
+    name: Karate API Tests
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout test-automation repo
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Run Karate API tests
+        working-directory: ./karate
+        run: mvn -B test
+
+      - name: Upload Karate Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: karate-results-${{ github.run_id }}
+          path: |
+            karate/target/karate-reports/
+            karate/target/surefire-reports/
+          retention-days: 30
+
   publish-report:
     name: Publish Combined Report
-    needs: [playwright, newman]
+    needs: [playwright, newman, karate]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     environment:
@@ -184,9 +213,16 @@ jobs:
           name: newman-results-${{ github.run_id }}
           path: downloads/newman
 
+      - name: Download Karate report
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: karate-results-${{ github.run_id }}
+          path: downloads/karate
+
       - name: Build combined report site
         run: |
-          mkdir -p combined-report/playwright combined-report/newman
+          mkdir -p combined-report/playwright combined-report/newman combined-report/karate
 
           if [ -d "downloads/playwright/playwright-report" ]; then
             cp -r downloads/playwright/playwright-report/. combined-report/playwright/
@@ -194,6 +230,13 @@ jobs:
 
           if [ -f "downloads/newman/report.html" ]; then
             cp downloads/newman/report.html combined-report/newman/index.html
+          fi
+
+          if [ -d "downloads/karate/karate-reports" ]; then
+            cp -r downloads/karate/karate-reports/. combined-report/karate/
+            if [ -f "combined-report/karate/karate-summary.html" ]; then
+              cp combined-report/karate/karate-summary.html combined-report/karate/index.html
+            fi
           fi
 
           cat > combined-report/index.html <<'EOF'
@@ -224,6 +267,7 @@ jobs:
             <ul>
               <li><a href="./playwright/index.html">Playwright E2E Report</a></li>
               <li><a href="./newman/index.html">Newman API Report</a></li>
+              <li><a href="./karate/index.html">Karate API Report</a></li>
             </ul>
           </body>
           </html>
