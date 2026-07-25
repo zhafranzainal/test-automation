@@ -4,7 +4,7 @@ API test suite for **Automation Exercise** built with **Postman** and executed h
 
 The collection validates common REST API scenarios, including product retrieval, brand retrieval, product search, user account lifecycle, and login verification.
 
-* **API**: https://automationexercise.com/
+* **API**: https://automationexercise.com/api_list
 
 ## Folder Structure
 
