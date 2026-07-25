@@ -4,6 +4,7 @@ url: "{{baseUrl}}/searchProduct"
 method: POST
 body:
   type: urlencoded
+  content: {}
 scripts:
   - type: afterResponse
     code: "pm.test(\"Status 200\", () => {\r
