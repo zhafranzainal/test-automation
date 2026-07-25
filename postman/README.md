@@ -10,11 +10,15 @@ The collection validates common REST API scenarios, including product retrieval,
 
 ```text
 postman/
-├── automationexercise.postman_collection.json      # API request collection
+├── newman-report/                                  # Generated HTML/JUnit reports (gitignored)
+├── automationexercise.postman_collection.json      # API request collection (Newman/CI source of truth)
 ├── automationexercise.postman_environment.json     # Environment variables
-├── newman-report/                                  # Generated HTML reports (gitignored)
+├── package-lock.json
+├── package.json                                    # Newman + reporter dependencies and npm scripts
 └── README.md
 ```
+
+> **Note on two collection formats:** This repo currently has both a v2.1 JSON collection (used by Newman/CI) and a v3 YAML collection under `collections/` (used by the Postman App's Native Git integration). **Newman cannot run the YAML format** — only the Postman CLI can. Keep `automationexercise.postman_collection.json` as the source of truth for test runs, and treat the YAML tree as inert unless migrate the pipeline to the Postman CLI.
 
 ## Test Coverage
 
@@ -31,23 +35,18 @@ The collection covers the following scenarios:
 | API 7     | Verify Login with Valid Details                              |
 | API 8     | Verify Login without Email Parameter (negative)              |
 | API 9     | Delete To Verify Login (negative)                            |
-| API 10    | Create/Register User Account                                 |
-| API 11    | Delete User Account                                          |
+| API 10    | Verify Login with Invalid Details (negative)                 |
+| API 11    | Create/Register User Account                                 |
+| API 12    | Delete User Account                                          |
+| API 13    | Update User Account                                          |
+| API 14    | Get User Account Detail by Email                             |
+
+APIs 11, 7, 14, 13, and 12 run in sequence inside the **User Account Lifecycle** folder (create → login → fetch → update → delete), sharing a dynamically generated test user across the run.
 
 ## Prerequisites
 
-Install Node.js if it is not already installed.
-
-Install Newman globally:
-
 ```bash
-npm install -g newman
-```
-
-Install the HTML reporter:
-
-```bash
-npm install -g newman-reporter-htmlextra
+npm install
 ```
 
 ## Running Tests
@@ -55,48 +54,52 @@ npm install -g newman-reporter-htmlextra
 Run the entire collection:
 
 ```bash
-newman run postman/automationexercise.postman_collection.json \
--e postman/automationexercise.postman_environment.json
+npm run test:api
 ```
 
 Run the collection and generate an HTML report:
 
 ```bash
-newman run postman/automationexercise.postman_collection.json \
--e postman/automationexercise.postman_environment.json \
--r cli,htmlextra \
---reporter-htmlextra-export postman/newman-report/report.html
+npm run test:report
 ```
+
+Run the collection with HTML + JUnit reports (used in CI):
+
+```bash
+npm run test:ci
+```
+
+For anything not covered by an npm script, use `npx newman` directly, e.g.:
 
 Run only a specific folder within the collection:
 
 ```bash
-newman run postman/automationexercise.postman_collection.json \
--e postman/automationexercise.postman_environment.json \
---folder "User Account"
+npx newman run automationexercise.postman_collection.json \
+-e automationexercise.postman_environment.json \
+--folder "User Account Lifecycle"
 ```
 
 Run a single iteration:
 
 ```bash
-newman run postman/automationexercise.postman_collection.json \
--e postman/automationexercise.postman_environment.json \
+npx newman run automationexercise.postman_collection.json \
+-e automationexercise.postman_environment.json \
 -n 1
 ```
 
 Run with verbose console output:
 
 ```bash
-newman run postman/automationexercise.postman_collection.json \
--e postman/automationexercise.postman_environment.json \
+npx newman run automationexercise.postman_collection.json \
+-e automationexercise.postman_environment.json \
 --verbose
 ```
 
 Stop execution when a request or test fails:
 
 ```bash
-newman run postman/automationexercise.postman_collection.json \
--e postman/automationexercise.postman_environment.json \
+npx newman run automationexercise.postman_collection.json \
+-e automationexercise.postman_environment.json \
 --bail
 ```
 
@@ -113,16 +116,13 @@ newman run postman/automationexercise.postman_collection.json \
 Generate an HTML execution report:
 
 ```bash
-newman run postman/automationexercise.postman_collection.json \
--e postman/automationexercise.postman_environment.json \
--r cli,htmlextra \
---reporter-htmlextra-export postman/newman-report/report.html
+npm run test:report
 ```
 
 After execution, open:
 
 ```text
-postman/newman-report/report.html
+newman-report/report.html
 ```
 
 The report includes:
@@ -136,14 +136,14 @@ The report includes:
 
 ## CI/CD
 
-The collection can be executed in any CI/CD pipeline using Newman.
+The collection can be executed in any CI/CD pipeline using Newman. Since `newman` is a devDependency in `package.json`, the pipeline only needs Node.js and `npm install` — no global Newman install.
 
 Example:
 
 ```bash
-newman run postman/automationexercise.postman_collection.json \
--e postman/automationexercise.postman_environment.json \
--r cli,junit,htmlextra
+cd postman
+npm install
+npm run test:ci
 ```
 
-The generated HTML and JUnit reports can be uploaded as pipeline artifacts in GitHub Actions, Azure DevOps, GitLab CI, or Jenkins.
+The generated HTML and JUnit reports (`newman-report/report.html`, `newman-report/results.xml`) can be uploaded as pipeline artifacts in GitHub Actions, Azure DevOps, GitLab CI, or Jenkins.
