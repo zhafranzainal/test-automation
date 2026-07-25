@@ -29,8 +29,7 @@ test.describe('Customer Login', () => {
     await test.step(`Then user is able to view "${PAGE_HEADER.MY_ACCOUNT_PAGE}" page with user name "${fullName}"`, async () => {
       await myAccountPage.waitForLoad();
       await expect(myAccountPage.pageTitle).toBeVisible();
-      await page.waitForTimeout(1000);
-      await expect(myAccountPage.navUserMenu).toContainText(fullName, { timeout: 10000 });
+      await expect(myAccountPage.navUserMenu).toContainText(fullName);
     });
 
   });
