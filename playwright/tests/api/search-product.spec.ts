@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { apiRoutes } from '../../utils/routes';
 import { API_MESSAGES } from '../../utils/api-messages';
+import { attachResponse } from '../../utils/api-helpers';
 
 test.describe('Search Product API', () => {
 
-  test('API 5: POST To Search Product', async ({ request }) => {
+  test('API 5: POST To Search Product', async ({ request }, testInfo) => {
 
     const response = await test.step('When user searches for a product using the search_product parameter', async () => {
       return request.post(apiRoutes.SEARCH_PRODUCT, {
@@ -12,26 +13,28 @@ test.describe('Search Product API', () => {
       });
     });
 
+    const body = await response.json();
+    await attachResponse(response, testInfo);
+
     await test.step('Then response should return HTTP 200 with matching products', async () => {
       expect(response.status()).toBe(200);
-
-      const body = await response.json();
       expect(body.responseCode).toBe(200);
       expect(Array.isArray(body.products)).toBeTruthy();
     });
 
   });
 
-  test('API 6: POST To Search Product without search_product parameter', async ({ request }) => {
+  test('API 6: POST To Search Product without search_product parameter', async ({ request }, testInfo) => {
 
     const response = await test.step('When user sends a search request without the search_product parameter', async () => {
       return request.post(apiRoutes.SEARCH_PRODUCT, { form: {} });
     });
 
+    const body = await response.json();
+    await attachResponse(response, testInfo);
+
     await test.step('Then response body should indicate the parameter is missing', async () => {
       expect(response.status()).toBe(200);
-
-      const body = await response.json();
       expect(body.responseCode).toBe(400);
       expect(body.message).toBe(API_MESSAGES.SEARCH_MISSING_PARAM);
     });
