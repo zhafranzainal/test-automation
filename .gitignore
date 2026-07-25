@@ -1,3 +1,4 @@
 .env
 */node_modules
 postman/newman-report
+/karate/.idea
