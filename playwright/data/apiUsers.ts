@@ -15,11 +15,11 @@ export const generateNewUser = () => {
         company: 'Fintech Sdn Bhd',
         address1: '123 Automation Street',
         address2: 'Unit 4B',
-        country: 'India',
-        zipcode: '110001',
-        state: 'Delhi',
-        city: 'New Delhi',
-        mobile_number: '9876543210',
+        country: 'Turkey',
+        zipcode: '35210',
+        state: 'Izmir',
+        city: 'Izmir',
+        mobile_number: '5456789012',
     };
 
 };
