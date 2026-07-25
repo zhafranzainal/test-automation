@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "22c25479-ddc5-48dd-828f-aaffc6f722c2",
     "name": "Automation Exercise API",
-    "description": "Covers all 14 public endpoints of automationexercise.com/api, mirroring playwright/tests/api/*.spec.ts (Products List, Brands List, Search Product, Verify Login, User Account Lifecycle).",
+    "description": "Covers all 14 public endpoints of automationexercise.com/api (Products List, Brands List, Search Product, Verify Login, User Account Lifecycle).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "22518319",
     "_collection_link": "https://go.postman.co/collection/22518319-22c25479-ddc5-48dd-828f-aaffc6f722c2?source=collection_link"
