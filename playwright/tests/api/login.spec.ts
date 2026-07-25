@@ -1,8 +1,7 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/base.fixture';
 import { apiRoutes } from '../../utils/routes';
 import { invalidUser } from '../../data/apiUsers';
 import { API_MESSAGES } from '../../utils/api-messages';
-import { attachResponse } from '../../utils/api-helpers';
 
 test.describe('Verify Login API', () => {
 
@@ -15,7 +14,6 @@ test.describe('Verify Login API', () => {
     });
 
     const body = await response.json();
-    await attachResponse(response, testInfo);
 
     await test.step('Then response body should indicate a required parameter is missing', async () => {
       expect(response.status()).toBe(200);
@@ -32,7 +30,6 @@ test.describe('Verify Login API', () => {
     });
 
     const body = await response.json();
-    await attachResponse(response, testInfo);
 
     await test.step('Then response body should indicate the request method is not supported', async () => {
       expect(response.status()).toBe(200);
@@ -49,7 +46,6 @@ test.describe('Verify Login API', () => {
     });
 
     const body = await response.json();
-    await attachResponse(response, testInfo);
 
     await test.step('Then response body should indicate the user was not found', async () => {
       expect(response.status()).toBe(200);

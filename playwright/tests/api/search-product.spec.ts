@@ -1,7 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/base.fixture';
 import { apiRoutes } from '../../utils/routes';
 import { API_MESSAGES } from '../../utils/api-messages';
-import { attachResponse } from '../../utils/api-helpers';
 
 test.describe('Search Product API', () => {
 
@@ -14,7 +13,6 @@ test.describe('Search Product API', () => {
     });
 
     const body = await response.json();
-    await attachResponse(response, testInfo);
 
     await test.step('Then response should return HTTP 200 with matching products', async () => {
       expect(response.status()).toBe(200);
@@ -31,7 +29,6 @@ test.describe('Search Product API', () => {
     });
 
     const body = await response.json();
-    await attachResponse(response, testInfo);
 
     await test.step('Then response body should indicate the parameter is missing', async () => {
       expect(response.status()).toBe(200);

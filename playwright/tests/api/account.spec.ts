@@ -1,8 +1,7 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/base.fixture';
 import { generateNewUser } from '../../data/apiUsers';
 import { apiRoutes } from '../../utils/routes';
 import { API_MESSAGES } from '../../utils/api-messages';
-import { attachResponse } from '../../utils/api-helpers';
 
 // These tests share one dynamically generated user across the full lifecycle
 // create -> login -> fetch -> update -> delete
@@ -17,7 +16,6 @@ test.describe.serial('User Account Lifecycle API', () => {
     });
 
     const body = await response.json();
-    await attachResponse(response, testInfo);
 
     await test.step('Then account should be created successfully', async () => {
       expect(response.status()).toBe(200);
@@ -36,7 +34,6 @@ test.describe.serial('User Account Lifecycle API', () => {
     });
 
     const body = await response.json();
-    await attachResponse(response, testInfo);
 
     await test.step('Then response body should confirm the user exists', async () => {
       expect(response.status()).toBe(200);
@@ -53,7 +50,6 @@ test.describe.serial('User Account Lifecycle API', () => {
     });
 
     const body = await response.json();
-    await attachResponse(response, testInfo);
 
     await test.step('Then response should return the correct user details', async () => {
       expect(response.status()).toBe(200);
@@ -74,7 +70,6 @@ test.describe.serial('User Account Lifecycle API', () => {
     });
 
     const body = await response.json();
-    await attachResponse(response, testInfo);
 
     await test.step('Then account should be updated successfully', async () => {
       expect(response.status()).toBe(200);
@@ -93,7 +88,6 @@ test.describe.serial('User Account Lifecycle API', () => {
     });
 
     const body = await response.json();
-    await attachResponse(response, testInfo);
 
     await test.step('Then account should be deleted successfully', async () => {
       expect(response.status()).toBe(200);

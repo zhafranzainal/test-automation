@@ -1,7 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/base.fixture';
 import { apiRoutes } from '../../utils/routes';
 import { API_MESSAGES } from '../../utils/api-messages';
-import { attachResponse } from '../../utils/api-helpers';
 
 test.describe('Products List API', () => {
 
@@ -12,7 +11,6 @@ test.describe('Products List API', () => {
     });
 
     const body = await response.json();
-    await attachResponse(response, testInfo);
 
     await test.step('Then response should return HTTP 200 with a non-empty list of products', async () => {
       expect(response.status()).toBe(200);
@@ -30,7 +28,6 @@ test.describe('Products List API', () => {
     });
 
     const body = await response.json();
-    await attachResponse(response, testInfo);
 
     await test.step('Then response body should indicate the request method is not supported', async () => {
       expect(response.status()).toBe(200);
