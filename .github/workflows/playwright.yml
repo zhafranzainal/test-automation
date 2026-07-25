@@ -26,7 +26,7 @@ jobs:
         with:
           repository: testsmith-io/practice-software-testing
           path: pst-app
-          ref: v2.3
+          ref: 2.3
 
       - name: Start containers
         working-directory: ./pst-app
