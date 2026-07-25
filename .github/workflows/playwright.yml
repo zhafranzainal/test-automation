@@ -31,11 +31,35 @@ jobs:
         working-directory: ./pst-app
         run: docker compose -f docker-compose.yml up -d
 
-      - name: Wait for MariaDB and API containers to be ready
+      - name: Wait for MariaDB to be ready
         working-directory: ./pst-app
         run: |
           timeout 180 sh -c 'until docker compose exec -T mariadb mysqladmin ping -h localhost -uroot -proot --silent; do sleep 2; done'
-          timeout 180 sh -c 'until docker compose exec -T laravel-api php -v > /dev/null 2>&1; do sleep 2; done'
+
+      - name: Wait for composer install to finish
+        working-directory: ./pst-app
+        run: |
+          timeout 180 sh -c '
+            while true; do
+              cid=$(docker compose ps -q composer)
+              if [ -z "$cid" ]; then
+                echo "composer container no longer present (likely finished and removed)"
+                break
+              fi
+              running=$(docker inspect -f "{{.State.Running}}" "$cid" 2>/dev/null || echo "false")
+              if [ "$running" = "false" ]; then
+                echo "composer container has exited"
+                break
+              fi
+              echo "waiting for composer install..."
+              sleep 3
+            done
+          '
+
+      - name: Verify vendor/autoload.php exists
+        working-directory: ./pst-app
+        run: |
+          timeout 60 sh -c 'until docker compose exec -T laravel-api test -f /var/www/vendor/autoload.php; do sleep 2; done'
 
       - name: Run database migrations and seed
         working-directory: ./pst-app
