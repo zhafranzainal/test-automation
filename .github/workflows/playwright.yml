@@ -28,12 +28,23 @@ jobs:
           path: pst-app
           ref: 2.3
 
+      - name: Patch Angular Docker image
+        working-directory: ./pst-app
+        run: |
+          echo "--- Before patch ---"
+          grep -n "^FROM" _docker/ui.docker
+          sed -i -E 's/node:20[.0-9]*-alpine/node:22-alpine/g' _docker/ui.docker
+          echo "--- After patch ---"
+          grep -n "^FROM" _docker/ui.docker
+
       - name: Start containers
         working-directory: ./pst-app
         env:
           SPRINT: sprint5
           DISABLE_LOGGING: "true"
-        run: docker compose -f docker-compose.yml up -d --force-recreate
+        run: |
+          docker compose build --no-cache angular-ui
+          docker compose up -d --force-recreate
 
       - name: Sleep for 30 seconds (wait for containers)
         run: sleep 30s
