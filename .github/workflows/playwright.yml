@@ -74,7 +74,7 @@ jobs:
           echo "--- container status ---"
           docker compose -f docker-compose.yml ps -a
           echo "--- images built ---"
-          docker images | grep pst-app
+          docker images | grep -E "pst-|testsmith" || echo "no matching images found"
 
       - name: Wait for app to be ready
         run: |
