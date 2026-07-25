@@ -114,7 +114,7 @@ jobs:
         env:
           CI: true
           WEB_URL: http://localhost:4200
-          API_URL: http://localhost:8091
+          API_URL: ${{ vars.API_URL }}
         run: npx playwright test
 
       - name: Show app logs on failure
