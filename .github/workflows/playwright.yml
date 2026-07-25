@@ -49,6 +49,18 @@ jobs:
       - name: Sleep for 30 seconds (wait for containers)
         run: sleep 30s
 
+      - name: Ensure Laravel storage directories exist
+        working-directory: ./pst-app
+        run: |
+          docker compose exec -T -u root laravel-api sh -c "
+            mkdir -p storage/framework/cache/data \
+                     storage/framework/sessions \
+                     storage/framework/views \
+                     storage/logs \
+            && chmod -R 775 storage bootstrap/cache \
+            && chown -R www-data:www-data storage bootstrap/cache
+          "
+
       - name: Install Composer dependencies
         working-directory: ./pst-app
         run: docker compose exec -T -u root laravel-api composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-ffi
