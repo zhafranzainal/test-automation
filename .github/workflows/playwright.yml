@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Test Automation Pipeline
 
 on:
   push:
@@ -10,12 +10,10 @@ permissions:
   id-token: write
 
 jobs:
-  test:
+  playwright:
+    name: Playwright E2E Tests
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout test-automation repo
@@ -115,7 +113,7 @@ jobs:
           CI: true
           WEB_URL: http://localhost:4200
           API_URL: ${{ vars.API_URL }}
-        run: npx playwright test
+        run: npm test
 
       - name: Show app logs on failure
         if: failure()
@@ -132,17 +130,113 @@ jobs:
             playwright/test-results.json
           retention-days: 30
 
-      - name: Setup Pages
+  newman:
+    name: Newman API Tests
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout test-automation repo
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install Postman/Newman dependencies
+        working-directory: ./postman
+        run: npm ci
+
+      - name: Run Newman API tests
+        working-directory: ./postman
+        run: npm run test:ci
+
+      - name: Upload Newman Report
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
+        with:
+          name: newman-results-${{ github.run_id }}
+          path: |
+            postman/newman-report/
+          retention-days: 30
+
+  publish-report:
+    name: Publish Combined Report
+    needs: [playwright, newman]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download Playwright report
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: playwright-results-${{ github.run_id }}
+          path: downloads/playwright
+
+      - name: Download Newman report
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: newman-results-${{ github.run_id }}
+          path: downloads/newman
+
+      - name: Build combined report site
+        run: |
+          mkdir -p combined-report/playwright combined-report/newman
+
+          if [ -d "downloads/playwright/playwright-report" ]; then
+            cp -r downloads/playwright/playwright-report/. combined-report/playwright/
+          fi
+
+          if [ -f "downloads/newman/report.html" ]; then
+            cp downloads/newman/report.html combined-report/newman/index.html
+          fi
+
+          cat > combined-report/index.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <title>Test Automation Reports</title>
+            <style>
+              body { font-family: system-ui, sans-serif; max-width: 640px; margin: 4rem auto; line-height: 1.6; }
+              h1 { margin-bottom: 0.25rem; }
+              ul { list-style: none; padding: 0; }
+              li { margin: 1rem 0; }
+              a {
+                display: inline-block;
+                padding: 0.75rem 1.25rem;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                text-decoration: none;
+                color: #222;
+              }
+              a:hover { background: #f4f4f4; }
+            </style>
+          </head>
+          <body>
+            <h1>Test Automation Reports</h1>
+            <p>Run #${{ github.run_number }} &middot; ${{ github.sha }}</p>
+            <ul>
+              <li><a href="./playwright/index.html">Playwright E2E Report</a></li>
+              <li><a href="./newman/index.html">Newman API Report</a></li>
+            </ul>
+          </body>
+          </html>
+          EOF
+
+      - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload report to Pages
-        if: ${{ !cancelled() }}
         uses: actions/upload-pages-artifact@v3
         with:
-          path: playwright/playwright-report
+          path: combined-report
 
       - name: Deploy report
         id: deployment
-        if: ${{ !cancelled() }}
         uses: actions/deploy-pages@v4
