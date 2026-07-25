@@ -1,6 +1,6 @@
 import { Page, Locator } from '@playwright/test';
 import { BasePage } from './base.page';
-import { routes } from '../utils/routes';
+import { webRoutes } from '../utils/routes';
 import { PAGE_HEADER } from '../utils/ui-elements';
 
 export class MyAccountPage extends BasePage {
@@ -15,7 +15,7 @@ export class MyAccountPage extends BasePage {
   }
 
   async waitForLoad() {
-    await this.waitForUrlContains(routes.MY_ACCOUNT_PAGE_URL);
+    await this.waitForUrlContains(webRoutes.MY_ACCOUNT_PAGE_URL);
   }
 
 }
