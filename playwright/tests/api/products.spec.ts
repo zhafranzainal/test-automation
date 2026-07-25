@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { apiRoutes } from '../../utils/routes';
+import { API_MESSAGES } from '../../utils/api-messages';
 
 test.describe('Products List API', () => {
 
@@ -31,7 +32,7 @@ test.describe('Products List API', () => {
 
       const body = await response.json();
       expect(body.responseCode).toBe(405);
-      expect(body.message).toBe('This request method is not supported.');
+      expect(body.message).toBe(API_MESSAGES.METHOD_NOT_SUPPORTED);
     });
 
   });

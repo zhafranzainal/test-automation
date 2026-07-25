@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { apiRoutes } from '../../utils/routes';
 import { invalidUser } from '../../data/apiUsers';
+import { API_MESSAGES } from '../../utils/api-messages';
 
 test.describe('Verify Login API', () => {
 
@@ -17,7 +18,7 @@ test.describe('Verify Login API', () => {
 
       const body = await response.json();
       expect(body.responseCode).toBe(400);
-      expect(body.message).toBe('Bad request, email or password parameter is missing in POST request.');
+      expect(body.message).toBe(API_MESSAGES.LOGIN_MISSING_PARAM);
     });
 
   });
@@ -33,7 +34,7 @@ test.describe('Verify Login API', () => {
 
       const body = await response.json();
       expect(body.responseCode).toBe(405);
-      expect(body.message).toBe('This request method is not supported.');
+      expect(body.message).toBe(API_MESSAGES.METHOD_NOT_SUPPORTED);
     });
 
   });
@@ -49,7 +50,7 @@ test.describe('Verify Login API', () => {
 
       const body = await response.json();
       expect(body.responseCode).toBe(404);
-      expect(body.message).toBe('User not found!');
+      expect(body.message).toBe(API_MESSAGES.USER_NOT_FOUND);
     });
 
   });

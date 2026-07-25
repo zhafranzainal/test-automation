@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { generateNewUser } from '../../data/apiUsers';
 import { apiRoutes } from '../../utils/routes';
+import { API_MESSAGES } from '../../utils/api-messages';
 
 // These tests share one dynamically generated user across the full lifecycle
 // create -> login -> fetch -> update -> delete
@@ -19,7 +20,7 @@ test.describe.serial('User Account Lifecycle API', () => {
 
       const body = await response.json();
       expect(body.responseCode).toBe(201);
-      expect(body.message).toBe('User created!');
+      expect(body.message).toBe(API_MESSAGES.USER_CREATED);
     });
 
   });
@@ -37,7 +38,7 @@ test.describe.serial('User Account Lifecycle API', () => {
 
       const body = await response.json();
       expect(body.responseCode).toBe(200);
-      expect(body.message).toBe('User exists!');
+      expect(body.message).toBe(API_MESSAGES.USER_EXISTS);
     });
 
   });
@@ -73,7 +74,7 @@ test.describe.serial('User Account Lifecycle API', () => {
 
       const body = await response.json();
       expect(body.responseCode).toBe(200);
-      expect(body.message).toBe('User updated!');
+      expect(body.message).toBe(API_MESSAGES.USER_UPDATED);
     });
 
   });
@@ -91,7 +92,7 @@ test.describe.serial('User Account Lifecycle API', () => {
 
       const body = await response.json();
       expect(body.responseCode).toBe(200);
-      expect(body.message).toBe('Account deleted!');
+      expect(body.message).toBe(API_MESSAGES.ACCOUNT_DELETED);
     });
 
   });

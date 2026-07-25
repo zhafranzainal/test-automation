@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { apiRoutes } from '../../utils/routes';
+import { API_MESSAGES } from '../../utils/api-messages';
 
 test.describe('Search Product API', () => {
 
@@ -32,7 +33,7 @@ test.describe('Search Product API', () => {
 
       const body = await response.json();
       expect(body.responseCode).toBe(400);
-      expect(body.message).toBe('Bad request, search_product parameter is missing in POST request.');
+      expect(body.message).toBe(API_MESSAGES.SEARCH_MISSING_PARAM);
     });
 
   });
