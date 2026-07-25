@@ -27,58 +27,51 @@ jobs:
           repository: testsmith-io/practice-software-testing
           path: pst-app
 
-      - name: Start application stack
+      - name: Start containers
         working-directory: ./pst-app
-        run: docker compose -f docker-compose.yml up -d
+        env:
+          SPRINT: sprint5
+          DISABLE_LOGGING: "true"
+        run: docker compose -f docker-compose.yml up -d --force-recreate
 
-      - name: Wait for MariaDB to be ready
+      - name: Sleep for 30 seconds (wait for containers)
+        run: sleep 30s
+
+      - name: Install Composer dependencies
         working-directory: ./pst-app
-        run: |
-          timeout 180 sh -c 'until docker compose exec -T mariadb mysqladmin ping -h localhost -uroot -proot --silent; do sleep 2; done'
+        run: docker compose exec -T -u root laravel-api composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-ffi
 
-      - name: Wait for composer install to finish
-        working-directory: ./pst-app
-        run: |
-          timeout 180 sh -c '
-            while true; do
-              cid=$(docker compose ps -q composer)
-              if [ -z "$cid" ]; then
-                echo "composer container no longer present (likely finished and removed)"
-                break
-              fi
-              running=$(docker inspect -f "{{.State.Running}}" "$cid" 2>/dev/null || echo "false")
-              if [ "$running" = "false" ]; then
-                echo "composer container has exited"
-                break
-              fi
-              echo "waiting for composer install..."
-              sleep 3
-            done
-          '
-
-      - name: Verify vendor/autoload.php exists
+      - name: Wait for database to be ready
         working-directory: ./pst-app
         run: |
-          timeout 60 sh -c 'until docker compose exec -T laravel-api test -f /var/www/vendor/autoload.php; do sleep 2; done'
+          echo "Waiting for MariaDB..."
+          for i in $(seq 1 30); do
+            if docker compose exec -T mariadb mysqladmin ping -h localhost -u root -proot --silent 2>/dev/null; then
+              echo "MariaDB is ready!"
+              break
+            fi
+            echo "Attempt $i/30 - not ready yet, waiting 2s..."
+            sleep 2
+          done
 
-      - name: Run database migrations and seed
+      - name: Create & Seed database
         working-directory: ./pst-app
         run: docker compose exec -T laravel-api php artisan migrate:refresh --seed
 
-      - name: Show env and container status
-        if: always()
-        working-directory: ./pst-app
+      - name: Wait for Angular UI to be ready
         run: |
-          echo "--- .env contents ---"
-          cat .env || echo ".env not found"
-          echo "--- container status ---"
-          docker compose -f docker-compose.yml ps -a
-          echo "--- images built ---"
-          docker images | grep -E "pst-|testsmith" || echo "no matching images found"
-
-      - name: Wait for app to be ready
-        run: |
-          npx --yes wait-on -t 300000 -i 3000 http://localhost:4200 http://localhost:8091
+          echo "Waiting for Angular UI on port 4200..."
+          for i in $(seq 1 60); do
+            if curl -s -o /dev/null -w "%{http_code}" http://localhost:4200 | grep -q "200"; then
+              echo "Angular UI is ready!"
+              exit 0
+            fi
+            echo "Attempt $i/60 - not ready yet, waiting 5s..."
+            sleep 5
+          done
+          echo "Angular UI failed to start within 5 minutes"
+          docker compose -f pst-app/docker-compose.yml logs angular-ui
+          exit 1
 
       - uses: actions/setup-node@v4
         with:
