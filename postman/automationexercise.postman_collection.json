@@ -1,0 +1,885 @@
+{
+  "info": {
+    "_postman_id": "22c25479-ddc5-48dd-828f-aaffc6f722c2",
+    "name": "Automation Exercise API",
+    "description": "Covers all 14 public endpoints of automationexercise.com/api, mirroring playwright/tests/api/*.spec.ts (Products List, Brands List, Search Product, Verify Login, User Account Lifecycle).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "22518319",
+    "_collection_link": "https://go.postman.co/collection/22518319-22c25479-ddc5-48dd-828f-aaffc6f722c2?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Products List",
+      "item": [
+        {
+          "name": "API 1: Get All Products List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 200\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"products is a non-empty array\", () => {\r",
+                  "    pm.expect(Array.isArray(body.products)).to.be.true;\r",
+                  "    pm.expect(body.products.length).to.be.greaterThan(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/productsList",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "productsList"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API 2: POST To All Products List should not be allowed",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 405\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(405);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"message indicates method not supported\", () => {\r",
+                  "    pm.expect(body.message).to.eql(\"This request method is not supported.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/productsList",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "productsList"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Brands List",
+      "item": [
+        {
+          "name": "API 3: Get All Brands List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 200\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"brands is a non-empty array\", () => {\r",
+                  "    pm.expect(Array.isArray(body.brands)).to.be.true;\r",
+                  "    pm.expect(body.brands.length).to.be.greaterThan(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/brandsList",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "brandsList"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API 4: PUT To All Brands List should not be allowed",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 405\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(405);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"message indicates method not supported\", () => {\r",
+                  "    pm.expect(body.message).to.eql(\"This request method is not supported.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/brandsList",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "brandsList"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Search Product",
+      "item": [
+        {
+          "name": "API 5: POST To Search Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 200\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"products is an array\", () => {\r",
+                  "    pm.expect(Array.isArray(body.products)).to.be.true;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "search_product",
+                  "value": "top",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/searchProduct",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "searchProduct"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API 6: POST To Search Product without search_product parameter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 400\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"message indicates missing parameter\", () => {\r",
+                  "    pm.expect(body.message).to.eql(\"Bad request, search_product parameter is missing in POST request.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{baseUrl}}/searchProduct",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "searchProduct"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Verify Login",
+      "item": [
+        {
+          "name": "API 8: POST To Verify Login without email parameter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 400\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"message indicates missing parameter\", () => {\r",
+                  "    pm.expect(body.message).to.eql(\"Bad request, email or password parameter is missing in POST request.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "password",
+                  "value": "wrong-password",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/verifyLogin",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "verifyLogin"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API 9: DELETE To Verify Login should not be allowed",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 405\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(405);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"message indicates method not supported\", () => {\r",
+                  "    pm.expect(body.message).to.eql(\"This request method is not supported.\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/verifyLogin",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "verifyLogin"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API 10: POST To Verify Login with invalid details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 404\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"message indicates user not found\", () => {\r",
+                  "    pm.expect(body.message).to.eql(\"User not found!\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "not.a.real.user@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "wrong-password",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/verifyLogin",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "verifyLogin"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Account Lifecycle",
+      "description": "Run in order (matches playwright test.describe.serial in account.spec.ts): create -> login -> fetch -> update -> delete. Each request stores/reuses testUserName, testUserEmail, testUserPassword environment variables generated in API 11.",
+      "item": [
+        {
+          "name": "API 11: POST To Create/Register User Account",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const timestamp = Date.now();\r",
+                  "\r",
+                  "pm.environment.set('testUserName', `QA Tester ${timestamp}`);\r",
+                  "pm.environment.set('testUserEmail', `qa.tester.${timestamp}@example.com`);\r",
+                  "pm.environment.set('testUserPassword', 'Test@1234');"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 201\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"message confirms user created\", () => {\r",
+                  "    pm.expect(body.message).to.eql(\"User created!\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "{{testUserName}}",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "{{testUserEmail}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{testUserPassword}}",
+                  "type": "text"
+                },
+                {
+                  "key": "title",
+                  "value": "Mr",
+                  "type": "text"
+                },
+                {
+                  "key": "birth_date",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "birth_month",
+                  "value": "6",
+                  "type": "text"
+                },
+                {
+                  "key": "birth_year",
+                  "value": "1995",
+                  "type": "text"
+                },
+                {
+                  "key": "firstname",
+                  "value": "QA",
+                  "type": "text"
+                },
+                {
+                  "key": "lastname",
+                  "value": "Tester",
+                  "type": "text"
+                },
+                {
+                  "key": "company",
+                  "value": "Fintech Sdn Bhd",
+                  "type": "text"
+                },
+                {
+                  "key": "address1",
+                  "value": "123 Automation Street",
+                  "type": "text"
+                },
+                {
+                  "key": "address2",
+                  "value": "Unit 4B",
+                  "type": "text"
+                },
+                {
+                  "key": "country",
+                  "value": "Turkey",
+                  "type": "text"
+                },
+                {
+                  "key": "zipcode",
+                  "value": "35210",
+                  "type": "text"
+                },
+                {
+                  "key": "state",
+                  "value": "Izmir",
+                  "type": "text"
+                },
+                {
+                  "key": "city",
+                  "value": "Izmir",
+                  "type": "text"
+                },
+                {
+                  "key": "mobile_number",
+                  "value": "5456789012",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/createAccount",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "createAccount"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API 7: POST To Verify Login with valid details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 200\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"message confirms user exists\", () => {\r",
+                  "    pm.expect(body.message).to.eql(\"User exists!\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{testUserEmail}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{testUserPassword}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/verifyLogin",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "verifyLogin"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API 14: GET user account detail by email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 200\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"returns correct user details\", () => {\r",
+                  "    pm.expect(body.user.email).to.eql(pm.environment.get('testUserEmail'));\r",
+                  "    pm.expect(body.user.first_name).to.eql('QA');\r",
+                  "    pm.expect(body.user.last_name).to.eql('Tester');\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/getUserDetailByEmail?email={{testUserEmail}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "getUserDetailByEmail"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "{{testUserEmail}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API 13: PUT METHOD To Update User Account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 200\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"message confirms user updated\", () => {\r",
+                  "    pm.expect(body.message).to.eql(\"User updated!\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "{{testUserName}} Updated",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "{{testUserEmail}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{testUserPassword}}",
+                  "type": "text"
+                },
+                {
+                  "key": "title",
+                  "value": "Mr",
+                  "type": "text"
+                },
+                {
+                  "key": "birth_date",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "birth_month",
+                  "value": "6",
+                  "type": "text"
+                },
+                {
+                  "key": "birth_year",
+                  "value": "1995",
+                  "type": "text"
+                },
+                {
+                  "key": "firstname",
+                  "value": "QA",
+                  "type": "text"
+                },
+                {
+                  "key": "lastname",
+                  "value": "Tester",
+                  "type": "text"
+                },
+                {
+                  "key": "company",
+                  "value": "Fintech Sdn Bhd",
+                  "type": "text"
+                },
+                {
+                  "key": "address1",
+                  "value": "123 Automation Street",
+                  "type": "text"
+                },
+                {
+                  "key": "address2",
+                  "value": "Unit 4B",
+                  "type": "text"
+                },
+                {
+                  "key": "country",
+                  "value": "Turkey",
+                  "type": "text"
+                },
+                {
+                  "key": "zipcode",
+                  "value": "35210",
+                  "type": "text"
+                },
+                {
+                  "key": "state",
+                  "value": "Izmir",
+                  "type": "text"
+                },
+                {
+                  "key": "city",
+                  "value": "Izmir",
+                  "type": "text"
+                },
+                {
+                  "key": "mobile_number",
+                  "value": "5456789012",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/updateAccount",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "updateAccount"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API 12: DELETE METHOD To Delete User Account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"responseCode is 200\", () => {\r",
+                  "    pm.expect(body.responseCode).to.eql(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"message confirms account deleted\", () => {\r",
+                  "    pm.expect(body.message).to.eql(\"Account deleted!\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{testUserEmail}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{testUserPassword}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/deleteAccount",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "deleteAccount"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

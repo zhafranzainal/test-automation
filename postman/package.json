@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run test:api",
-    "test:api": "newman run postman/automationexercise.postman_collection.json -e postman/automationexercise.postman_environment.json",
-    "test:report": "newman run postman/automationexercise.postman_collection.json -e postman/automationexercise.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export postman/newman-report/report.html",
-    "test:ci": "newman run postman/automationexercise.postman_collection.json -e postman/automationexercise.postman_environment.json -r cli,junit,htmlextra --reporter-junit-export postman/newman-report/results.xml --reporter-htmlextra-export postman/newman-report/report.html"
+    "test:api": "newman run automationexercise.postman_collection.json -e automationexercise.postman_environment.json",
+    "test:report": "newman run automationexercise.postman_collection.json -e automationexercise.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export newman-report/report.html",
+    "test:ci": "newman run automationexercise.postman_collection.json -e automationexercise.postman_environment.json -r cli,junit,htmlextra --reporter-junit-export newman-report/results.xml --reporter-htmlextra-export newman-report/report.html"
   },
   "keywords": [
     "api",
