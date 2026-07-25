@@ -34,6 +34,10 @@ function fn() {
     // applies to every scenario in every feature
     karate.configure('connectTimeout', 10000);
     karate.configure('readTimeout', 10000);
+    karate.configure('headers', {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        'Accept': 'application/json, text/plain, */*'
+    });
 
     return config;
 
