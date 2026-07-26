@@ -2,12 +2,12 @@ import { test, expect } from '../../fixtures/base.fixture';
 
 import { LoginPage } from '../../pages/login.page';
 import { MyAccountPage } from '../../pages/my-account.page';
-import { testUsers } from '../../data/users';
+import { runtimeUser } from '../../data/runtimeUser';
 import { PAGE_HEADER } from '../../utils/ui-elements';
 
 test.describe('Customer Login', () => {
 
-  const { email, password, fullName } = testUsers.validCustomer1;
+  const { email, password, fullName } = runtimeUser;
 
   test('customer should be able to sign in with valid credentials', async ({ page }) => {
 
@@ -46,10 +46,12 @@ test.describe('Customer Login', () => {
 
     });
 
-    await test.step(`Then user is able to view "${PAGE_HEADER.MY_ACCOUNT_PAGE}" page with user name "${fullName}"`, async () => {
+    await test.step(`Then user is able to view "${PAGE_HEADER.MY_ACCOUNT_PAGE}" page${fullName ? ` with user name "${fullName}"` : ''}`, async () => {
       await myAccountPage.waitForLoad();
       await expect(myAccountPage.pageTitle).toBeVisible();
-      await expect(myAccountPage.navUserMenu).toContainText(fullName);
+      if (fullName) {
+        await expect(myAccountPage.navUserMenu).toContainText(fullName);
+      }
     });
 
   });

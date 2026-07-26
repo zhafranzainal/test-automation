@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Login Test Runner</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #12181f;
+    --border: #232b34;
+    --text: #d8dee9;
+    --muted: #6b7684;
+    --accent: #4fb0ff;
+    --pass: #3fb950;
+    --fail: #f85149;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  header { margin-bottom: 28px; }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    padding: 2px 6px;
+    margin-bottom: 10px;
+  }
+  h1 { font-size: 20px; margin: 0 0 6px; font-weight: 600; }
+  p.sub { color: var(--muted); font-size: 13px; margin: 0; }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px;
+    margin-bottom: 18px;
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  textarea {
+    width: 100%;
+    min-height: 160px;
+    background: #0a0e13;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    font-family: var(--mono);
+    font-size: 13px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  textarea:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+
+  .row { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+  button {
+    background: var(--accent);
+    color: #05131f;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 18px;
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.5; cursor: default; }
+  button:hover:not(:disabled) { filter: brightness(1.1); }
+
+  .status-line { font-size: 12px; color: var(--muted); }
+  .error-box {
+    border: 1px solid var(--fail);
+    color: var(--fail);
+    background: rgba(248, 81, 73, 0.08);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 13px;
+    margin-top: 10px;
+    white-space: pre-wrap;
+  }
+
+  .results { display: none; }
+  .summary {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+  .summary span.count { font-weight: 700; }
+  .summary .p { color: var(--pass); }
+  .summary .f { color: var(--fail); }
+
+  .test-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .test-row:first-child { border-top: none; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+  .dot.passed { background: var(--pass); }
+  .dot.failed, .dot.timedOut { background: var(--fail); }
+  .test-title { flex: 1; }
+  .test-error { color: var(--fail); font-size: 12px; margin-top: 4px; white-space: pre-wrap; }
+  .test-duration { color: var(--muted); font-size: 11px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="tag">QA TOOLS</div>
+      <h1>Login Test Runner</h1>
+      <p class="sub">Paste test data as JSON, click Run — no code editing required.</p>
+    </header>
+
+    <div class="panel">
+      <label for="json-input">Test data (JSON)</label>
+      <textarea id="json-input" spellcheck="false">{
+  "email": "customer@practicesoftwaretesting.com",
+  "password": "welcome01",
+  "fullName": "Jane Doe"
+}</textarea>
+      <div class="row">
+        <button id="run-btn">Run test</button>
+        <span class="status-line" id="status-line"></span>
+      </div>
+      <div class="error-box" id="error-box" style="display:none;"></div>
+    </div>
+
+    <div class="panel results" id="results-panel">
+      <div class="summary">
+        <span><span class="count" id="count-total">0</span> total</span>
+        <span class="p"><span class="count" id="count-passed">0</span> passed</span>
+        <span class="f"><span class="count" id="count-failed">0</span> failed</span>
+      </div>
+      <div id="test-list"></div>
+    </div>
+  </div>
+
+<script>
+  const runBtn = document.getElementById('run-btn');
+  const jsonInput = document.getElementById('json-input');
+  const statusLine = document.getElementById('status-line');
+  const errorBox = document.getElementById('error-box');
+  const resultsPanel = document.getElementById('results-panel');
+  const testList = document.getElementById('test-list');
+
+  function showError(msg) {
+    errorBox.style.display = 'block';
+    errorBox.textContent = msg;
+  }
+
+  function clearError() {
+    errorBox.style.display = 'none';
+    errorBox.textContent = '';
+  }
+
+  runBtn.addEventListener('click', async () => {
+    clearError();
+    resultsPanel.style.display = 'none';
+
+    let payload;
+    try {
+      payload = JSON.parse(jsonInput.value);
+    } catch (e) {
+      showError('Invalid JSON: ' + e.message);
+      return;
+    }
+
+    runBtn.disabled = true;
+    statusLine.textContent = 'Running login.spec.ts against a live browser — this can take 10–30s...';
+
+    try {
+      const res = await fetch('/api/run-login-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        showError(data.error + (data.stderr ? '\n\n' + data.stderr : ''));
+        return;
+      }
+
+      renderResults(data);
+    } catch (e) {
+      showError('Request failed: ' + e.message);
+    } finally {
+      runBtn.disabled = false;
+      statusLine.textContent = '';
+    }
+  });
+
+  function renderResults(data) {
+    document.getElementById('count-total').textContent = data.total;
+    document.getElementById('count-passed').textContent = data.passed;
+    document.getElementById('count-failed').textContent = data.failed;
+
+    testList.innerHTML = '';
+    for (const t of data.tests) {
+      const row = document.createElement('div');
+      row.className = 'test-row';
+
+      const dot = document.createElement('div');
+      dot.className = 'dot ' + t.status;
+
+      const body = document.createElement('div');
+      body.className = 'test-title';
+      body.textContent = t.title;
+
+      if (t.error) {
+        const err = document.createElement('div');
+        err.className = 'test-error';
+        err.textContent = t.error;
+        body.appendChild(err);
+      }
+
+      const dur = document.createElement('div');
+      dur.className = 'test-duration';
+      dur.textContent = t.durationMs != null ? t.durationMs + 'ms' : '';
+
+      row.appendChild(dot);
+      row.appendChild(body);
+      row.appendChild(dur);
+      testList.appendChild(row);
+    }
+
+    resultsPanel.style.display = 'block';
+  }
+</script>
+</body>
+</html>
